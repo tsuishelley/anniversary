@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Lusitana:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Last Ten Years</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      font-family: 'Karla', sans-serif;
+      background-color: #f9f7f2;
+      color: #3a2d2d;
+    }
+
+    .scroll-outer {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scroll-inner {
+      display: flex;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      will-change: transform;
+    }
+
+    .year-slide {
+      flex: 0 0 auto;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .image-slide {
+      flex: 0 0 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .year-content {
+      display: flex;
+      gap: 4rem;
+      align-items: center;
+      max-width: 90%;
+      height: 80vh;
+    }
+
+    .image-container {
+      position: relative;
+      flex: 1;
+      max-width: 60%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .year-image {
+      max-width: 80%;
+      max-height: 80%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .year-text {
+      flex: 0 0 400px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .year-text h2 {
+      font-family: 'Lusitana', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #2d1b1b;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .year-text p {
+      line-height: 1.6;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .timeline {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+      background: rgba(249, 247, 242, 0.9);
+      padding: 1rem 2rem;
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
+    }
+
+    .timeline button {
+      background: none;
+      border: none;
+      color: #3a2d2d;
+      font-size: 0.9rem;
+      cursor: pointer;
+      position: relative;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-family: 'Karla', sans-serif;
+
+    }
+
+    .timeline button:hover {
+      background: rgba(58, 45, 45, 0.1);
+    }
+
+    .timeline button::after {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      border: 1px solid #3a2d2d;
+      border-radius: 50%;
+      margin: 1rem auto 0;
+      transition: background 0.3s ease;
+    }
+
+    .timeline button.active::after {
+      background: #3a2d2d;
+    }
+
+    @media (max-width: 768px) {
+      .year-content {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+        height: auto;
+        max-height: 80vh;
+      }
+      
+      .image-container {
+        max-width: 90%;
+        height: 50vh;
+        flex: none;
+      }
+      
+      .year-text {
+        flex: none;
+        max-width: 90%;
+      }
+      
+      .timeline {
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+      }
+      
+      .timeline button {
+        font-size: 0.8rem;
+        padding: 0.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .year-content {
+        gap: 1rem;
+        padding: 1rem;
+      }
+      
+      .image-container {
+        height: 40vh;
+      }
+      
+      .year-text h2 {
+        font-size: 1.5rem;
+      }
+      
+      .year-text p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-outer">
+    <div class="scroll-inner">
+      <!-- Slides will be generated here -->
+    </div>
+  </div>
+
+  <nav class="timeline">
+    <button data-target="year-1">2016</button>
+    <button data-target="year-2">2017</button>
+    <button data-target="year-3">2018</button>
+    <button data-target="year-4">2019</button>
+    <button data-target="year-5">2020</button>
+    <button data-target="year-6">2021</button>
+    <button data-target="year-7">2022</button>
+    <button data-target="year-8">2023</button>
+    <button data-target="year-9">2024</button>
+    <button data-target="year-10">2025</button>
+  </nav>
+
+  <script>
+    let memoriesData = []; // Store the loaded memories data
+    let currentYear = 0; // Track current year
+
+    async function loadSlides() {
+      try {
+        const response = await fetch('memories.json');
+        memoriesData = await response.json();
+        const container = document.querySelector('.scroll-inner');
+
+        // Create intro slide
+        const introSection = document.createElement('section');
+        introSection.className = 'image-slide intro-slide';
+        introSection.innerHTML = `
+          <div class="year-content">
+            <div class="year-text" style="max-width: 600px; text-align: center; flex: none;">
+              <h2>Happy 10th Anniversary</h2>
+              <p>We've taken so many photos together throughout the years and memories we've created. I pulled ten photos from each year into this timeline so we don't forget all the moments we had.
+                <br><br>I love you so much. I can't believe I have someone as incredible as you in my life. I can't wait for all the moments to come. </p>
+            </div>
+          </div>
+        `;
+        container.appendChild(introSection);
+
+        // Create individual slides for each image
+        memoriesData.forEach(({ year, images }) => {
+          images.forEach((imageData, imageIndex) => {
+            const section = document.createElement('section');
+            section.className = 'image-slide';
+            section.dataset.year = year;
+            section.dataset.imageIndex = imageIndex;
+            
+            section.innerHTML = `
+              <div class="year-content">
+                <div class="image-container">
+                  <img src="${imageData.image}" alt="${imageData.title}" class="year-image" loading="lazy" />
+                </div>
+                <div class="year-text">
+                  <p>${imageData.text}</p>
+                </div>
+              </div>
+            `;
+            container.appendChild(section);
+          });
+        });
+
+        // Set container width for horizontal scroll (including intro slide)
+        const totalImages = memoriesData.reduce((sum, year) => sum + year.images.length, 0);
+        container.style.width = `${(totalImages + 1) * 100}vw`; // +1 for intro slide
+        document.body.style.height = `${(totalImages + 1) * window.innerWidth}px`; // +1 for intro slide
+
+      } catch (error) {
+        console.error('Error loading memories:', error);
+        const container = document.querySelector('.scroll-inner');
+        container.innerHTML = `
+          <div class="image-slide" style="text-align: center;">
+            <div class="year-content">
+              <div class="year-text">
+                <h2>Unable to load memories</h2>
+                <p>Please make sure memories.json is in the same folder as this HTML file.</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSlides();
+    });
+
+    // Scroll and navigation functionality
+    const scrollContainer = document.querySelector('.scroll-inner');
+    const buttons = document.querySelectorAll('.timeline button');
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const viewportWidth = window.innerWidth;
+      
+      // Transform the container to show horizontal movement
+      scrollContainer.style.transform = `translateX(-${scrollY}px)`;
+      
+      // Calculate which slide we're currently viewing (accounting for intro slide)
+      const currentSlideIndex = Math.floor(scrollY / viewportWidth);
+      
+      // If we're on the intro slide, don't highlight any year buttons
+      if (currentSlideIndex === 0) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        currentYear = 0;
+        return;
+      }
+      
+      // Calculate which image and year we're currently viewing (subtract 1 for intro slide)
+      const currentImageIndex = currentSlideIndex - 1;
+      
+      // Find which year this image belongs to
+      let imagesSoFar = 0;
+      let newYear = 1;
+      
+      for (let i = 0; i < memoriesData.length; i++) {
+        const yearData = memoriesData[i];
+        if (currentImageIndex < imagesSoFar + yearData.images.length) {
+          newYear = i + 1;
+          break;
+        }
+        imagesSoFar += yearData.images.length;
+      }
+
+      // Update current year
+      if (newYear !== currentYear && newYear > 0) {
+        currentYear = newYear;
+      }
+
+      // Update timeline buttons - only change when year changes
+      buttons.forEach(btn => btn.classList.remove('active'));
+      const currentButton = document.querySelector(`[data-target="year-${currentYear}"]`);
+      if (currentButton) {
+        currentButton.classList.add('active');
+      }
+    });
+
+    // Timeline button click handlers
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.timeline button')) {
+        const targetYear = parseInt(e.target.dataset.target.replace('year-', ''));
+        
+        // Calculate scroll position for start of that year (add 1 for intro slide)
+        let totalImagesBefore = 1; // Start with 1 for intro slide
+        for (let i = 0; i < targetYear - 1; i++) {
+          if (memoriesData[i]) {
+            totalImagesBefore += memoriesData[i].images.length;
+          }
+        }
+        
+        const scrollPosition = totalImagesBefore * window.innerWidth;
+        window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+      }
+    });
+  </script>
+</body>
+</html>
