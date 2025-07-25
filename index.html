@@ -251,8 +251,8 @@
         `;
         container.appendChild(introSection);
 
-        // Create individual slides for each image
-        memoriesData.forEach(({ year, images }) => {
+        // Create individual slides for each image (excluding the last year)
+        memoriesData.slice(0, -1).forEach(({ year, images }) => {
           images.forEach((imageData, imageIndex) => {
             const section = document.createElement('section');
             section.className = 'image-slide';
@@ -273,10 +273,24 @@
           });
         });
 
-        // Set container width for horizontal scroll (including intro slide)
-        const totalImages = memoriesData.reduce((sum, year) => sum + year.images.length, 0);
-        container.style.width = `${(totalImages + 1) * 100}vw`; // +1 for intro slide
-        document.body.style.height = `${(totalImages + 1) * window.innerWidth}px`; // +1 for intro slide
+        // Create ending slide (2025)
+        const endingSection = document.createElement('section');
+        endingSection.className = 'image-slide ending-slide';
+        endingSection.innerHTML = `
+          <div class="year-content">
+            <div class="year-text" style="max-width: 600px; text-align: center; flex: none;">
+              <h2>Here's to the Next Ten Years</h2>
+              <p>Thank you for an incredible decade of love, laughter, adventures, and countless beautiful moments. From our first nervous dates to building a home together, every year has been better than the last.
+                <br><br>I can't wait to see what the next ten years bring us. More trips, more memories, and hopefully many more anniversaries to celebrate together. I love you endlessly. </p>
+            </div>
+          </div>
+        `;
+        container.appendChild(endingSection);
+
+        // Set container width for horizontal scroll (intro + 9 years of images + ending slide)
+        const totalImages = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
+        container.style.width = `${(totalImages + 2) * 100}vw`; // +2 for intro and ending slides
+        document.body.style.height = `${(totalImages + 2) * window.innerWidth}px`; // +2 for intro and ending slides
 
       } catch (error) {
         console.error('Error loading memories:', error);
@@ -323,17 +337,30 @@
       // Calculate which image and year we're currently viewing (subtract 1 for intro slide)
       const currentImageIndex = currentSlideIndex - 1;
       
-      // Find which year this image belongs to
+      // Find which year this image belongs to (only count the first 9 years)
       let imagesSoFar = 0;
       let newYear = 1;
       
-      for (let i = 0; i < memoriesData.length; i++) {
+      for (let i = 0; i < memoriesData.length - 1; i++) { // Exclude last year (2025)
         const yearData = memoriesData[i];
         if (currentImageIndex < imagesSoFar + yearData.images.length) {
           newYear = i + 1;
           break;
         }
         imagesSoFar += yearData.images.length;
+      }
+
+      // Check if we're on the ending slide
+      const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
+      if (currentImageIndex >= totalImagesBeforeEnding) {
+        // We're on the ending slide (2025)
+        buttons.forEach(btn => btn.classList.remove('active'));
+        const endingButton = document.querySelector(`[data-target="year-10"]`);
+        if (endingButton) {
+          endingButton.classList.add('active');
+        }
+        currentYear = 10;
+        return;
       }
 
       // Update current year
@@ -354,16 +381,23 @@
       if (e.target.matches('.timeline button')) {
         const targetYear = parseInt(e.target.dataset.target.replace('year-', ''));
         
-        // Calculate scroll position for start of that year (add 1 for intro slide)
-        let totalImagesBefore = 1; // Start with 1 for intro slide
-        for (let i = 0; i < targetYear - 1; i++) {
-          if (memoriesData[i]) {
-            totalImagesBefore += memoriesData[i].images.length;
+        if (targetYear === 10) {
+          // Jump to ending slide (2025)
+          const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
+          const scrollPosition = (totalImagesBeforeEnding + 1) * window.innerWidth; // +1 for intro slide
+          window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+        } else {
+          // Calculate scroll position for start of that year (add 1 for intro slide)
+          let totalImagesBefore = 1; // Start with 1 for intro slide
+          for (let i = 0; i < targetYear - 1; i++) {
+            if (memoriesData[i]) {
+              totalImagesBefore += memoriesData[i].images.length;
+            }
           }
+          
+          const scrollPosition = totalImagesBefore * window.innerWidth;
+          window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
         }
-        
-        const scrollPosition = totalImagesBefore * window.innerWidth;
-        window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
       }
     });
   </script>
