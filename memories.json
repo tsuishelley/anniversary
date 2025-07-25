@@ -408,44 +408,44 @@
       "year": 10,
       "images": [
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-1",
+          "image": "/",
           "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-2",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-3",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-4",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-5",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-6",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-7",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-8",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-9",
-          "text": "."
+            "image": "/",
+            "text": "."
         },
         {
-          "image": "https://via.placeholder.com/400x400/746010/0a0000?text=2024-10",
-          "text": "."
+            "image": "/",
+            "text": "."
         }
       ]
     }

@@ -334,6 +334,21 @@
         return;
       }
       
+      // Calculate total images before ending slide
+      const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
+      
+      // Check if we're on the ending slide (position after all images + intro)
+      if (currentSlideIndex >= totalImagesBeforeEnding + 1) {
+        // We're on the ending slide (2025)
+        buttons.forEach(btn => btn.classList.remove('active'));
+        const endingButton = document.querySelector(`[data-target="year-10"]`);
+        if (endingButton) {
+          endingButton.classList.add('active');
+        }
+        currentYear = 10;
+        return;
+      }
+      
       // Calculate which image and year we're currently viewing (subtract 1 for intro slide)
       const currentImageIndex = currentSlideIndex - 1;
       
@@ -348,19 +363,6 @@
           break;
         }
         imagesSoFar += yearData.images.length;
-      }
-
-      // Check if we're on the ending slide
-      const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
-      if (currentImageIndex >= totalImagesBeforeEnding) {
-        // We're on the ending slide (2025)
-        buttons.forEach(btn => btn.classList.remove('active'));
-        const endingButton = document.querySelector(`[data-target="year-10"]`);
-        if (endingButton) {
-          endingButton.classList.add('active');
-        }
-        currentYear = 10;
-        return;
       }
 
       // Update current year
