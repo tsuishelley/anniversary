@@ -327,6 +327,21 @@
       // Calculate which slide we're currently viewing (accounting for intro slide)
       const currentSlideIndex = Math.floor(scrollY / viewportWidth);
       
+      // Calculate total images before ending slide
+      const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
+      const endingSlidePosition = totalImagesBeforeEnding + 1; // +1 for intro slide
+      
+      // Debug logging (remove after testing)
+      if (currentSlideIndex >= endingSlidePosition - 2) {
+        console.log('Near ending:', {
+          currentSlideIndex,
+          endingSlidePosition,
+          totalImagesBeforeEnding,
+          scrollY,
+          viewportWidth
+        });
+      }
+      
       // If we're on the intro slide, don't highlight any year buttons
       if (currentSlideIndex === 0) {
         buttons.forEach(btn => btn.classList.remove('active'));
@@ -334,11 +349,8 @@
         return;
       }
       
-      // Calculate total images before ending slide
-      const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
-      
-      // Check if we're on the ending slide (position after all images + intro)
-      if (currentSlideIndex >= totalImagesBeforeEnding + 1) {
+      // Check if we're on or past the ending slide position
+      if (currentSlideIndex >= endingSlidePosition) {
         // We're on the ending slide (2025)
         buttons.forEach(btn => btn.classList.remove('active'));
         const endingButton = document.querySelector(`[data-target="year-10"]`);
