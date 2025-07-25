@@ -290,7 +290,7 @@
         // Set container width for horizontal scroll (intro + 9 years of images + ending slide)
         const totalImages = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
         container.style.width = `${(totalImages + 2) * 100}vw`; // +2 for intro and ending slides
-        document.body.style.height = `${(totalImages + 1) * window.innerWidth}px`; // +1 for intro, ending centers naturally
+        document.body.style.height = `${(totalImages + 1.5) * window.innerWidth}px`; // Slight adjustment for ending
 
       } catch (error) {
         console.error('Error loading memories:', error);
@@ -384,7 +384,7 @@
         if (targetYear === 10) {
           // Jump to ending slide (2025)
           const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
-          const scrollPosition = (totalImagesBeforeEnding + 1) * window.innerWidth; // +1 for intro slide
+          const scrollPosition = totalImagesBeforeEnding * window.innerWidth; // Direct to ending position
           window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
         } else {
           // Calculate scroll position for start of that year (add 1 for intro slide)
