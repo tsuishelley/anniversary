@@ -349,8 +349,8 @@
         return;
       }
       
-      // Check if we're on or past the ending slide position
-      if (currentSlideIndex >= endingSlidePosition) {
+      // Check if we're on or near the ending slide position
+      if (currentSlideIndex >= endingSlidePosition - 1) {
         // We're on the ending slide (2025)
         buttons.forEach(btn => btn.classList.remove('active'));
         const endingButton = document.querySelector(`[data-target="year-10"]`);
