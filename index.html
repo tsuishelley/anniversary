@@ -5,7 +5,7 @@
   <link rel="icon" type="image/x-icon" href="images/favicon.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy 10th Anniversary</title>
+  <title>The Last Ten Years</title>
   <style>
     * {
       box-sizing: border-box;
@@ -384,7 +384,7 @@
         if (targetYear === 10) {
           // Jump to ending slide (2025)
           const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
-          const scrollPosition = totalImagesBeforeEnding * window.innerWidth; // Direct to ending position
+          const scrollPosition = (totalImagesBeforeEnding + 1) * window.innerWidth; // +1 for intro slide
           window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
         } else {
           // Calculate scroll position for start of that year (add 1 for intro slide)
