@@ -5,7 +5,7 @@
   <link rel="icon" type="image/x-icon" href="images/favicon.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Last Ten Years</title>
+  <title>Happy 10th Anniversary</title>
   <style>
     * {
       box-sizing: border-box;
@@ -289,9 +289,8 @@
 
         // Set container width for horizontal scroll (intro + 9 years of images + ending slide)
         const totalImages = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
-        const totalSlides = totalImages + 2; // +2 for intro and ending slides
-        container.style.width = `${totalSlides * 100}vw`;
-        document.body.style.height = `${(totalSlides - 1) * window.innerWidth}px`; // -1 so last slide centers perfectly
+        container.style.width = `${(totalImages + 2) * 100}vw`; // +2 for intro and ending slides
+        document.body.style.height = `${(totalImages + 1) * window.innerWidth}px`; // +1 for intro, ending centers naturally
 
       } catch (error) {
         console.error('Error loading memories:', error);
@@ -327,24 +326,11 @@
       
       // Calculate which slide we're currently viewing (accounting for intro slide)
       const currentSlideIndex = Math.floor(scrollY / viewportWidth);
-      const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
-      const maxScrollIndex = totalImagesBeforeEnding + 1; // +1 for intro slide
       
       // If we're on the intro slide, don't highlight any year buttons
       if (currentSlideIndex === 0) {
         buttons.forEach(btn => btn.classList.remove('active'));
         currentYear = 0;
-        return;
-      }
-      
-      // If we're at or past the ending slide position
-      if (currentSlideIndex >= maxScrollIndex) {
-        buttons.forEach(btn => btn.classList.remove('active'));
-        const endingButton = document.querySelector(`[data-target="year-10"]`);
-        if (endingButton) {
-          endingButton.classList.add('active');
-        }
-        currentYear = 10;
         return;
       }
       
