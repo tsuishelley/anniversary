@@ -215,6 +215,7 @@
   </div>
 
   <nav class="timeline">
+    <button data-target="year-0">2015</button>
     <button data-target="year-1">2016</button>
     <button data-target="year-2">2017</button>
     <button data-target="year-3">2018</button>
@@ -290,7 +291,7 @@
         // Set container width for horizontal scroll (intro + 9 years of images + ending slide)
         const totalImages = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
         container.style.width = `${(totalImages + 2) * 100}vw`; // +2 for intro and ending slides
-        document.body.style.height = `${(totalImages + 2) * window.innerWidth}px`; // Full range
+        document.body.style.height = `${(totalImages + 1.5) * window.innerWidth}px`; // Slight adjustment for ending
 
       } catch (error) {
         console.error('Error loading memories:', error);
@@ -342,9 +343,13 @@
         });
       }
       
-      // If we're on the intro slide, don't highlight any year buttons
+      // If we're on the intro slide, highlight 2015 button
       if (currentSlideIndex === 0) {
         buttons.forEach(btn => btn.classList.remove('active'));
+        const introButton = document.querySelector(`[data-target="year-0"]`);
+        if (introButton) {
+          introButton.classList.add('active');
+        }
         currentYear = 0;
         return;
       }
@@ -395,7 +400,10 @@
       if (e.target.matches('.timeline button')) {
         const targetYear = parseInt(e.target.dataset.target.replace('year-', ''));
         
-        if (targetYear === 10) {
+        if (targetYear === 0) {
+          // Jump to intro slide (2015)
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (targetYear === 10) {
           // Jump to ending slide (2025)
           const totalImagesBeforeEnding = memoriesData.slice(0, -1).reduce((sum, year) => sum + year.images.length, 0);
           const scrollPosition = (totalImagesBeforeEnding + 1) * window.innerWidth; // +1 for intro slide
